@@ -121,7 +121,7 @@ The structure of the input of functions is important!
         end
 \end{verbatim}
 
-Note that the above method is nowhere near the most efficient way of expression the factorial function, but it works as an example of recursion in this case.
+Note that the above method is nowhere near the most efficient way of expressing the factorial function, but it works as an example of recursion in this case.
 
 \section{13 Jan} % (fold)
 \subsection{Data types}
@@ -209,7 +209,7 @@ All elements of a list must be of the same type. You can get around this by defi
         end
 \end{verbatim}
 
-A binary tree is either empty or, if L and R are binary trees and v is a value of type $\alpha$, \verb!Node(v,L,R)!. Nothing else is binary tree.
+A binary tree is either empty or, if L and R are binary trees and v is a value of type $\alpha$, \verb!Node(v,L,R)!. Nothing else is a binary tree.
 
 \begin{verbatim}
     datatype 'a tree = Empty | Node of 'a * 'a tree * 'a tree
@@ -533,13 +533,13 @@ type 'a reflist = ('a rlist) ref;
 (* rapp: 'a reflist * 'a reflist -> unit *)
 (* returns unit as all we're doing is updating space in memory *)
 fun rapp (r1 as ref Empty, r2) = r1 := !r2
-  | rapp (ref (RCons (x,t)), r2) = rapp t r2
+  | rapp (ref (RCons (x,t)), r2) = rapp (t, r2)
 \end{verbatim}
 Now we can check this with some examples:
 \begin{verbatim}
 val rlist1 = ref (RCons(1,ref Empty))
 val rlist2 = ref (RCons(2,ref Empty))
-rapp rlist1 rlist2
+rapp (rlist1, rlist2)
 \end{verbatim}
 
 
@@ -634,7 +634,7 @@ Now we can use lazy evaluation with the \verb~horribleComp~ example.
 
 \begin{verbatim}
 (* original *)
-let val x = horribleCom(522)
+let val x = horribleComp(522)
 in x+x end
 
 (* call-by-name model *)
@@ -1027,8 +1027,8 @@ When is a variable bound? When is a variable free?
 \begin{itemize}
     \item \verb~FV(n) = {}~ where \verb~n~ is a number.
     \item \verb~FV(x) = {x}~
-    \item \verb~FV(e1 op e2) = FV(e1) U FV(e2)~
-    \item \verb~FV(let x = e1 in e2 end) = FV(e1) U F(e2) \ {x}~ \\
+    \item \verb~FV(e1 op e2) = FV(e1)~ $\cup$ \verb~FV(e2)~
+    \item \verb~FV(let x = e1 in e2 end) = FV(e1)~ $\cup$ \verb~F(e2) \ {x}~ \\
         \verb~let x=5 in let y=x+2 in y+x end end~ \\
         \verb~let x=x+2 in x+3 end~
 \end{itemize}
@@ -1101,7 +1101,7 @@ Values v := n | true | false | fn x => e
 \section{09 March}
 \begin{enumerate}
     \item Evaluating expressions (recursion)
-    \item Turing theory into code
+    \item Turning theory into code
     \item Modules
 \end{enumerate}
 
@@ -1171,11 +1171,11 @@ if 0 then 3 else 3+2
 (fn x => x+1) true
 \end{verbatim}
 
-Our evaluator will accept these expressions, but typing should rule out these ill-formed expressions. These should lead to run-time errors. Typing will ensure that we never evaluate these expressions.There will be fewer run-time errors as a consequence.
+Our evaluator will accept these expressions, but typing should rule out these ill-formed expressions. These should lead to run-time errors. Typing will ensure that we never evaluate these expressions. There will be fewer run-time errors as a consequence.
 
 Typing approximates what happens during run-time. Typing allows us to detect errors early and gives us precise error messages. As a consequence, programmers can spend more time developing and less time testing their programs. 
 
-When we type-check an expression, we prove the absense of certain program behaviors. 
+When we type-check an expression, we prove the absence of certain program behaviors.
 
 \textbf{Safety:} If a program is well-typed, then every intermediate state during evaluation is defined and well-typed. 
 
@@ -1413,7 +1413,7 @@ Recall that we needed type annotations on functions. \verb~fn x : int => x~
 
 Does an expression have a unique type? \verb~fn x => x~ could have the type \verb~int->int~ or \verb~bool->bool~, etc., however this function does have one principle type \verb~'a->'a~.
 
-\textbf{The question:} how can we infer the principle type of an expression \emph{without} given type annotations?
+\textbf{The question:} how can we infer the principle type of an expression \emph{without} being given type annotations?
 
 Example:
 \begin{verbatim}
@@ -1451,7 +1451,7 @@ How do we instantiate type variables? Substitution!
 \emph{Two views:}
 \begin{enumerate}
     \item Are \emph{all} substitution instances of \verb~e~ well-typed? \\
-        If e has some type T and constraints some type variables $\alpha_1, \ldots, \alpha_n$, then e has type \verb~[T1/'a1 ... Tn/'an] T~ for every $T_1, \ldots T_n$?
+        If e has some type T and constrains some type variables $\alpha_1, \ldots, \alpha_n$, then does e have type \verb~[T1/'a1 ... Tn/'an] T~ for every $T_1, \ldots T_n$?
     \item Does there exist some substitution instance such that e has type T?
 \end{enumerate}
 
@@ -1459,7 +1459,7 @@ For example: \verb~fn x => x+1~ has type $\beta$? Choose for $\beta =$ \verb~int
 
 \verb~fn x => x~ has type $\beta$? Choose for $\beta=$\verb~int->int~ or \verb~bool->bool~ or, most generally, \verb~'a->'a~.
 
-Will \verb~fn x => x+1~ have type \verb~'b->bool~? No. there is instantiation for \verb~'b~.
+Will \verb~fn x => x+1~ have type \verb~'b->bool~? No, there is no instantiation for \verb~'b~.
 
 \subsubsection{Type inference}
 \textbf{(1)} use typing rules to generate constraints. \textleftarrow will always succeed
@@ -1590,7 +1590,8 @@ C ^ tt => C
 C ^ int = int => C
 C ^ bool = bool => C
 C ^ T1->T2 = S1->S2 => C ^ T1=S2 ^ T2=S2
-C ^ 'a = T => [T/'a] C (provided 'a is not in FV(T)) (occurs check -- prevents circular terms)
+C ^ 'a = T => [T/'a] C (provided 'a is not in FV(T))
+    (occurs check -- prevents circular terms)
 C ^ T = 'a => [T/'a] C (same provisions)
 \end{verbatim}
 
@@ -1739,7 +1740,8 @@ in r
 end
 
 (* SML *)
-Warning : type variables are not generalized because of value restriction are instantiated with dummy types:  ?X1->?X1 ref
+Warning : type variables are not generalized because of value restriction
+are instantiated with dummy types:  ?X1->?X1 ref
 \end{verbatim}
 
 %%
@@ -1751,7 +1753,7 @@ So far, we have type inference rules.
 
 \textbf{Hindley-Milner} (type inference) -- \emph{Goal:} infer the most general type of an expression without declaring any types.
 
-\textbf{Disadvantages of not writing type annotations:}
+\textbf{Advantages of writing type annotations:}
 \begin{itemize}
     \item Gives better error messages (programmer communicates his or her intent)
     \item High-grade (high-quality) documentation -- does not get out of sync with the code

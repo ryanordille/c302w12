@@ -8,15 +8,23 @@
 \usepackage{proof}
 \usepackage{amsmath}
 \usepackage{textcomp}
+\usepackage{hyperref}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\title{COMP 302: In Class Notes}
+\title{COMP 302: Lecture Notes}
 \author{Ryan Ordille}
 
 \begin{document}
 \maketitle
 
-\section{09 January} % (fold)
+\pagestyle{myheadings}
+\markright{Ryan Ordille\hfill COMP 302: Programming Languages and Paradigms\hfill}
+
+These course notes are for COMP 302: Programming Languages and Paradigms, offered at McGill University in the Winter 2012 semester, taught by Professor Brigitte Pientka. These notes are simply what the instructor wrote on the board, and may contain errors. The notes are written by me, Ryan Ordille, and no copyright infringement is intended.  
+
+These course notes can be found at \url{https://github.com/ryanordille/c302w12}.
+
+\section{09 January}
 \subsection{Introduction to Functional Programming in Standard ML}
 \subsubsection{What are types?}
 Types classify terms (expressions) according to the properties of values.
@@ -42,7 +50,7 @@ We cannot mix types in SML, e.g. \verb~3.2 + 1~ will return a type error.
 
 Types are a \emph{static} approximation of the run-time behaviour of the program -- type checking is done \emph{before} execution.
 
-If statements must have a boolean as the guard, then two possible branches \emph{of the same type}. However, the type checker is not ``smart".
+If-statements must have a boolean as the guard, and two possible branches must be \emph{of the same type}. However, the type checker is not ``smart".
 
 \begin{verbatim}
     if true then 3.0 else 4.2 : real
@@ -50,11 +58,11 @@ If statements must have a boolean as the guard, then two possible branches \emph
     if false then 1 else 2.0 (* type error - branches do not agree on a type *)
 \end{verbatim}
 
-\section{11 January} % (fold)
+\section{11 January}
 \subsection{Bindings and scope of variables and functions}
 \verb~val pi = 3.14~
 
-\textbf{Binding:} variable name paired with a value.
+\textbf{Binding:} variable name paired with a value. Note that bindings are different than assignments found in imperative languages. 
 
 Local bindings:
 \begin{verbatim}
@@ -105,10 +113,11 @@ The structure of the input of functions is important!
     (* add' : (int * int) -> int *)
     add' (x : int, y : int) = x + y
 \end{verbatim}
+The function \verb~add'~ takes in one argument -- a tuple with two elements -- whereas \verb~add~ takes in two separate arguments.
 
 \subsection{Recursion in SML}
 \begin{verbatim}
-    exception Domain;
+    exception Domain
     fun fact n =
         let
             fun fact' 0 = 1
@@ -121,9 +130,9 @@ The structure of the input of functions is important!
         end
 \end{verbatim}
 
-Note that the above method is nowhere near the most efficient way of expression the factorial function, but it works as an example of recursion in this case.
+Note that the above method is nowhere near the most efficient way of expressing the factorial function, but it works as an example of recursion in this case.
 
-\section{13 Jan} % (fold)
+\section{13 Jan}
 \subsection{Data types}
 We can define our own datatypes using the \verb!datatype! keyword:
 \begin{verbatim}
@@ -143,7 +152,7 @@ SML will warn you if your pattern-matching does not cover all possible cases.
     val c0 = (Queen, Hearts)
 \end{verbatim}
 
-The above are examples of finite data types. What about infinite data types?
+The above are examples of finite data types. 
 
 Mathematically, a hand can be either empty, or, if $C$ is a card and $H$ is a hand, \verb!Hand(C,H)! (this is an example of a constructor).
 
@@ -158,10 +167,12 @@ Mathematically, a hand can be either empty, or, if $C$ is a card and $H$ is a ha
       | count (Hand (_, h)) = 1 + count h
 \end{verbatim}
 
+What about infinite data types?
+
 \subsubsection{Lists in SML}
 Lists are an example of an incredibly useful datatype found in SML's base language.
 
-A list is either empty (nil) or, if $A$ is an element and $C$ is a list, \verb!Cons(A,L)!.
+A list is either empty (nil) or, if $A$ is an element and $L$ is a list, \verb!Cons(A,L)!.
 
 Note here that \verb!'a! (pronounced ``alpha", for $\alpha$) is a type variable for all possible types. This allows us to create polymorphic data types.
 \begin{verbatim}
@@ -180,7 +191,7 @@ Lists are already defined in SML with a convenient syntax:
 
 All elements of a list must be of the same type. You can get around this by defining a new data type with the option of storing multiple values, if need be.
 
-\section{16 January} % (fold)
+\section{16 January}
 \subsection{Datatypes continued}
 \begin{verbatim}
     datatype 'a option = None | Some of 'a
@@ -209,7 +220,7 @@ All elements of a list must be of the same type. You can get around this by defi
         end
 \end{verbatim}
 
-A binary tree is either empty or, if L and R are binary trees and v is a value of type $\alpha$, \verb!Node(v,L,R)!. Nothing else is binary tree.
+A binary tree is either empty or, if L and R are binary trees and v is a value of type $\alpha$, \verb!Node(v,L,R)!.
 
 \begin{verbatim}
     datatype 'a tree = Empty | Node of 'a * 'a tree * 'a tree
@@ -226,11 +237,11 @@ A binary tree is either empty or, if L and R are binary trees and v is a value o
                 else Node((y,d'), L, (insert e R))
 \end{verbatim}
 
-\section{18 \& 20 January} % (fold)
+\section{18 \& 20 January}
 \subsection{Mathematical Induction}
 See induction pdf.
 
-\section{23 January} % (fold)
+\section{23 January}
 \subsection{Higher-Order Functions}
 Functions as values -- can pass to functions or return as results! This allows us to create modular, reusable code.
 
@@ -279,8 +290,8 @@ Our only real restriction on anonymous functions is that they cannot be recursiv
       | filter f (h::t) = if f h then h::filter t else filter t
 \end{verbatim}
 
-\section{25 \& 30 January} % (fold)
-These two lectures were taught by a TA, and cover higher-order functions, currying, and staging evaluation. The material can be found in the relevant pdf's.
+\section{25 \& 30 January}
+These two lectures were taught by a TA, and cover higher-order functions, currying, and staging evaluation. The material can be found in the relevant pdfs.
 
 
 \pagebreak
@@ -337,8 +348,6 @@ In SML, using continuations:
 \begin{verbatim}
 datatype regexp = Zero | One | Char of char | Plus of regexp * regexp
                 | Times of regexp*regexp | Star of regexp
-
-fun accept r s = 
 
 (* acc r s cont = bool *)
 (* acc: regexp -> char list -> (char list -> bool) -> bool *)
@@ -601,20 +610,23 @@ We have three different kinds of bindings we'd like to track using the environme
 \section{13 February}
 \subsection{Lazy Evaluation}
 
-So far, we've had an \emph{eager evaluation} strategy. For example, \verb~let x = e1 in e2 end~ will evaluate \verb~e1~ to some value \verb~v1~ and bind \verb~x~ to the value \verb~v1~, then evaluate \verb~e2~. This is also known as a \emph{call-by-value} strategy. Why should we evaluate \verb~e1~ if we never use it at all.
+So far, we've had an \emph{eager evaluation} strategy. For example, \verb~let x = e1 in e2 end~ will evaluate \verb~e1~ to some value \verb~v1~ and bind \verb~x~ to the value \verb~v1~, then evaluate \verb~e2~. This is also known as a \emph{call-by-value} strategy. Why should we evaluate \verb~e1~ if we never use it at all?
 
 This is especially relevant with ``harder" computations.
 
 \begin{verbatim}
-let val y = horribleComp(522)
-in 3*2 end
+let 
+  val y = horribleComp(322)
+in 
+  3*2 
+end
 \end{verbatim}
 
 With the call-by-value strategy, we always compute \verb~horribleComp(322)~, even if we never use it.
 
 We also have the \emph{call-by-name} strategy. In the original example, it will bind \verb~x~ to the expression \verb~e1~, then evaluate \verb~e2~. However, if we use \verb~x~ multiple times in \verb~e2~, we are evaluating \verb~e1~ multiple times.
 
-There's a ``best of both worlds" strategy we can also use -- \emph{call-by-need}. With this strategy in the original example, it will bind \verb~x~ to the expression \verb~e1~, then evaluate \verb~e2~, but memorize the result of evaluating \verb~e1~.
+There's a ``best of both worlds" strategy we can also use -- the \emph{call-by-need} strategy. In our original example, the call-by-need strategy will bind \verb~x~ to the expression \verb~e1~, then evaluate \verb~e2~, but memorize the result of evaluating \verb~e1~.
 
 Lazy evaluation is not only useful for saving computation time, but it also useful for evaluating infinite data structures. A stream of numbers online or interactive input/output from users would not be possible to deal with without infinite data structures.
 
@@ -630,21 +642,24 @@ fun delay c = Susp c
 fun force (Susp c) = c ()
 \end{verbatim}
 
-Now we can use lazy evaluation with the \verb~horribleComp~ example.
+Now we can use lazy evaluation with the \verb~horribleComp~ example:
 
 \begin{verbatim}
 (* original *)
-let val x = horribleCom(522)
+let val x = horribleComp(522)
 in x+x end
 
 (* call-by-name model *)
 let val x = Susp(fun () => horribleComp(522))
 in force x + force x end
 
-(* call-by-need*)
+(* call-by-need *)
+(* Not sure if this is correct *)
 val memo = ref None
-val x = Susp (fun () => case memo of None =>
-    let val y = horribleComp(522) in memo := (*MISSED*) end
+val x = Susp (fun () => 
+  case memo of 
+    None =>
+        let val y = horribleComp(522) in memo := y+y end
     | Some y => y
 
 (* infinite stream of 'a *)
@@ -672,7 +687,7 @@ fun numsFrom n = Susp(fn () => Cons(n, numsFrom (n-1))
 take 5 (numsFrom 0); (* returns [0,1,2,3,4] *)
 \end{verbatim}
 
-We can compute a stream of Finonnaci numbers:
+We can compute a stream of Fibonacci numbers:
 \begin{verbatim}
 val fibStream =
     let
@@ -739,7 +754,7 @@ We don't need to force both streams for the \verb~zipStreams~ function to save w
 
 \begin{verbatim}
 (* filter: ('a->bool)*'a stream -> 'a stream *)
-fun filter (p, s) = filter' (p, foce s)
+fun filter (p, s) = filter' (p, force s)
 (* filter': ('a -> bool) * 'a stream' -> 'a stream *)
 and filter' (p, (Cons(x,xs))) = 
     if p x then
@@ -751,14 +766,6 @@ and filter' (p, (Cons(x,xs))) =
 %%
 \section{27 February}
 \subsection{Midterm Review}
-Midterm exam -- Wednesday, 29 February in Leacock 26.
-
-Crib sheet allowed -- one page, back and front.
-
-Three questions -- proofs, programs, covering all material up until the break.
-
-No continuation, lazy evaluation, exceptions, or environment diagram questions.
-
 \subsubsection{Example 1: Proofs}
 \begin{verbatim}
 fun sum [] = 0
@@ -920,8 +927,6 @@ end
 \section{05 March -- Post-Midterm Material}
 \subsection{Introduction to Language Design}
 
-Homework 4 will be handed out on Friday, 09 March, to be due two weeks from then.
-
 ``A good designer must rely on experience, on precise, logical thinking, and on pedantic exactness. No magic will do." -- N. Worth
 
 \textbf{Goal:} a precise foundation for answering questions such as:
@@ -935,7 +940,7 @@ Homework 4 will be handed out on Friday, 09 March, to be due two weeks from then
     \item When is an expression well-typed?
     \item Does every expression have a unique type?
     \item What exactly is an expression? \\
-            Code \verb~->~ Parser (syntax checker) \verb~->~ Type Checker (static semantics) \verb~->~ Interpreter (operational semantics)
+            Code \textrightarrow Parser (syntax checker) \textrightarrow Type Checker (static semantics) \textrightarrow Interpreter (operational semantics)
 \end{itemize}
 
 In this class, we'll go through the different stages of running an ML program -- parsing, type checking, and interpreting. To ensure a language will produce ``correct" programs, we have to ensure that each of these stages produce correct results. 
@@ -947,7 +952,7 @@ We'll start with a small subset of ML.
 \begin{enumerate}
     \item A number is an expression.
     \item The boolean \verb~true~ and \verb~false~ are expressions.
-    \item If \verb~e1~ and \verb~e2~ are expressions, then \verb~e1 op e2~ is an expression, where \verb~op~ $\in \{$ \verb~+, -, *, =, <~ $\}$.
+    \item If \verb~e1~ and \verb~e2~ are expressions, then \verb~e1 op e2~ is an expression, where \verb~op~ $\in \{$ \verb~+,-,*,=,<~ $\}$.
     \item If \verb~e0~, \verb~e1~ and \verb~e2~ are expressions, then \verb~if e0 then e1 else e2~ is an expression.
 \end{enumerate}
 
@@ -985,8 +990,9 @@ This is equivalent to:
         premise_2
     }
 \]
+For example:
 \[
-    \infer{\verb~if~ e_0 \verb~then~ e_1 \verb~else~ e_2 \Downarrow v}{
+    \infer{\verb~if ~ e_0 \verb~ then ~ e_1 \verb~ else ~ e_2 \Downarrow v}{
         e_0 \Downarrow \verb~true~
         &
         e_1 \Downarrow v
@@ -1010,13 +1016,13 @@ let
        else 43
 in 
    z + 123
-end;
+end
 \end{verbatim}
 
 The following examples are not well-formed:
 \begin{verbatim}
 let z = 302
-in -z end;
+in -z end
 let x = 3 in x
 let x =3 x+2 end
 \end{verbatim}
@@ -1038,7 +1044,7 @@ Bound variable names don't matter -- \verb~let y=x+2 in y+3 end~.
 \subsection{Substitution:} 
 
 \[
-    \infer{\verb~let~ x = e \verb~in~ e^{\prime} \verb~end~ \Downarrow v}{
+    \infer{\verb~let ~ x = e \verb~ in ~ e^{\prime} \verb~ end~ \Downarrow v}{
         e \Downarrow v_0
         &
         [v_0/x] e^{\prime} \Downarrow v
@@ -1075,8 +1081,6 @@ We can also add functions to our BNF grammar:
 \begin{verbatim}
 Expression e := ... | fn x => e
 \end{verbatim}
-
-\textbf{Substitution for (nameless) functions:} (MISSED)
 
 \textbf{Evaluating functions:} \verb~(fn x => e)~
 
@@ -1171,11 +1175,11 @@ if 0 then 3 else 3+2
 (fn x => x+1) true
 \end{verbatim}
 
-Our evaluator will accept these expressions, but typing should rule out these ill-formed expressions. These should lead to run-time errors. Typing will ensure that we never evaluate these expressions.There will be fewer run-time errors as a consequence.
+Our evaluator will accept these expressions, but typing should rule out these ill-formed expressions. These should lead to run-time errors. Typing will ensure that we never evaluate these expressions. There will be fewer run-time errors as a consequence.
 
 Typing approximates what happens during run-time. Typing allows us to detect errors early and gives us precise error messages. As a consequence, programmers can spend more time developing and less time testing their programs. 
 
-When we type-check an expression, we prove the absense of certain program behaviors. 
+When we type-check an expression, we prove the absence of certain program behaviours. 
 
 \textbf{Safety:} If a program is well-typed, then every intermediate state during evaluation is defined and well-typed. 
 
